@@ -16,9 +16,9 @@ pipeline {
                 sh 'mvn --version'
             }
         }
-        stage ('Deploy') {
-            steps {
-            }
-        }
+        // stage ('Deploy') {
+        //     steps {
+        //     }
+        // }
     }
 }
