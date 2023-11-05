@@ -2,6 +2,12 @@ version: '3.7'
 services:
   db:
     image: postgres:12
+    restart: always
+    ports:
+      - target: 5432
+        published: 5432
+        protocol: tcp
+        mode: host
     environment:
       POSTGRES_USER: sonar
       POSTGRES_PASSWORD: sonar
@@ -10,8 +16,12 @@ services:
       - postgresql_data:/var/lib/postgresql/data
   sonarqube:
     image: sonarqube:latest
+    restart: always
     ports:
-      - '9000:9000'
+      - target: 9000
+        published: 9000
+        protocol: tcp
+        mode: host
     volumes:
       - 'sonarqube_data:/opt/sonarqube/data'
       - 'sonarqube_logs:/opt/sonarqube/logs'
@@ -28,7 +38,10 @@ services:
     command: --default-authentication-plugin=mysql_native_password
     restart: always
     ports:
-      - '3306:3306'
+      - target: 3306
+        published: 3306
+        protocol: tcp
+        mode: host
     environment:
       MYSQL_ROOT_PASSWORD: root
     volumes:
@@ -36,11 +49,40 @@ services:
   nexus:
     image: sonatype/nexus3:latest
     ports:
-      - '8081:8081'
+      - target: 8081
+        published: 8081
+        protocol: tcp
+        mode: host
     volumes:
       - nexus_data:/nexus-data
     environment:
       - INSTALL4J_ADD_VM_PARAMS=-Xms2703m -Xmx2703m -XX:MaxDirectMemorySize=2703m -Djava.util.prefs.userRoot=/nexus-data/javaprefs
+  prometheus:
+    image: prom/prometheus
+    ports:
+      - target: 9090
+        published: 9090
+        protocol: tcp
+        mode: host
+    volumes:
+      - 'prometheus_data:/prometheus'
+      - './prometheus.yml:/etc/prometheus/prometheus.yml'
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+  grafana:
+    image: grafana/grafana
+    ports:
+      - target: 3000
+        published: 3000
+        protocol: tcp
+        mode: host
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - 'grafana_data:/var/lib/grafana'
+    depends_on:
+      - prometheus
 volumes:
   postgresql:
     driver: local
@@ -53,4 +95,8 @@ volumes:
   mysql-data:
     driver: local
   nexus_data:
+    driver: local
+  prometheus_data:
+    driver: local
+  grafana_data:
     driver: local
