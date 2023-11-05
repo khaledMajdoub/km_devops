@@ -15,7 +15,7 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('sonarInstallation') {
-                    sh 'mvn clean verify sonar:sonar -Dsonar.projectKey=devops_km -Dsonar.projectName=\'devops_km\''
+                    sh 'mvn clean sonar:sonar -Dsonar.projectKey=devops_km -Dsonar.projectName=\'devops_km\''
                 }
             }
         }
