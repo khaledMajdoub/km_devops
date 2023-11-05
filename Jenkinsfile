@@ -12,6 +12,13 @@ pipeline {
                 sh "echo 'Hello World'"
             }
         }
+        stage('SonarQube Analysis') {
+            steps {
+                withSonarQubeEnv() {
+                    sh 'mvn clean verify sonar:sonar -Dsonar.projectKey=devops_km -Dsonar.projectName=\'devops_km\''
+                }
+            }
+        }
         stage ('Build') {
             steps {
                 sh 'mvn --version'
