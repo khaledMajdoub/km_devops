@@ -8,7 +8,6 @@ pipeline {
             steps {
                 checkout scmGit(branches: [[name: '*/khaled']], extensions: [], userRemoteConfigs: [[credentialsId: 'devops_khaled', url: 'https://github.com/KhaledMajdoub1/km_devops.git']])
                 sh 'git checkout khaled'
-                sh 'git pull'
                 sh 'ls -la'
                 sh "echo 'Hello World'"
             }
